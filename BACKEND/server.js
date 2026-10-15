@@ -28,3 +28,6 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is up and running on port number: ${PORT}`);
 });
+
+const authRouter = require("./Routes/Auth.js");
+app.use("/auth", authRouter);

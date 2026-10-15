@@ -1,8 +1,9 @@
 const router = require("express").Router();
 const Room = require("../models/Room");
+const { verifyToken, verifyAdmin } = require("../Middleware/auth");
 
 // Add a new room
-router.route("/add").post((req, res) => {
+router.route("/add").post(verifyToken, verifyAdmin, (req, res) => {
   const roomNumber = req.body.roomNumber;
   const type = req.body.type;
   const pricePerNight = Number(req.body.pricePerNight);
@@ -38,7 +39,7 @@ router.route("/").get((req, res) => {
 });
 
 // Update a room
-router.route("/update/:id").put(async (req, res) => {
+router.route("/update/:id").put(verifyToken, verifyAdmin, async (req, res) => {
   let roomId = req.params.id;
   const { roomNumber, type, pricePerNight, isAvailable } = req.body;
 
@@ -60,7 +61,7 @@ router.route("/update/:id").put(async (req, res) => {
 });
 
 // Delete a room
-router.route("/delete/:id").delete(async (req, res) => {
+router.route("/delete/:id").delete(verifyToken, verifyAdmin, async (req, res) => {
   let roomId = req.params.id;
 
   await Room.findByIdAndDelete(roomId)
@@ -88,3 +89,5 @@ router.route("/get/:id").get(async (req, res) => {
 });
 
 module.exports = router;
+
+
