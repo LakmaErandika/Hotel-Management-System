@@ -1,4 +1,5 @@
 
+
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -16,7 +17,14 @@ function Navbar() {
       <Link to="/" style={{ color: "#fff", marginRight: "15px" }}>Rooms</Link>
 
       {user && user.role === "admin" && (
-        <Link to="/add-room" style={{ color: "#fff", marginRight: "15px" }}>Add Room</Link>
+        <>
+          <Link to="/add-room" style={{ color: "#fff", marginRight: "15px" }}>Add Room</Link>
+          <Link to="/admin/bookings" style={{ color: "#fff", marginRight: "15px" }}>Manage Bookings</Link>
+        </>
+      )}
+
+      {user && user.role === "guest" && (
+        <Link to="/my-bookings" style={{ color: "#fff", marginRight: "15px" }}>My Bookings</Link>
       )}
 
       {!user && (

@@ -1,11 +1,16 @@
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import AddRoom from "./pages/AddRoom";
 import UpdateRoom from "./pages/UpdateRoom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import BookRoom from "./pages/BookRoom";
+import Payment from "./pages/Payment";
+import MyBookings from "./pages/MyBookings";
+import AdminBookings from "./pages/AdminBookings";
 import Navbar from "./components/Navbar";
 
 function App() {
@@ -15,10 +20,40 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/add-room" element={<AddRoom />} />
-          <Route path="/update-room/:id" element={<UpdateRoom />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
+          <Route path="/add-room" element={
+            <ProtectedRoute adminOnly>
+              <AddRoom />
+            </ProtectedRoute>
+          } />
+          <Route path="/update-room/:id" element={
+            <ProtectedRoute adminOnly>
+              <UpdateRoom />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/bookings" element={
+            <ProtectedRoute adminOnly>
+              <AdminBookings />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/book/:id" element={
+            <ProtectedRoute>
+              <BookRoom />
+            </ProtectedRoute>
+          } />
+          <Route path="/payment/:bookingId" element={
+            <ProtectedRoute>
+              <Payment />
+            </ProtectedRoute>
+          } />
+          <Route path="/my-bookings" element={
+            <ProtectedRoute>
+              <MyBookings />
+            </ProtectedRoute>
+          } />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

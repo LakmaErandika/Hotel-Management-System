@@ -117,4 +117,26 @@ router.route("/delete/:id").delete(verifyToken, verifyAdmin, async (req, res) =>
   }
 });
 
+// Guest confirms their own payment (dummy)
+router.route("/confirm-payment/:id").put(verifyToken, async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) {
+      return res.status(404).json({ error: "Booking not found" });
+    }
+    if (booking.guest.toString() !== req.user.id) {
+      return res.status(403).json({ error: "Not your booking" });
+    }
+
+    booking.paymentStatus = "paid";
+    booking.status = "confirmed";
+    await booking.save();
+
+    res.json({ status: "Payment confirmed", booking });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error confirming payment", details: err.message });
+  }
+});
+
 module.exports = router;

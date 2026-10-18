@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../services/api";
-import RoomCard from "../components/RoomCard";
+import { useAuth } from "../context/AuthContext";
 
 function Home() {
   const [rooms, setRooms] = useState([]);
+  const { user } = useAuth();
 
   const fetchRooms = () => {
     api.get("/room")
@@ -23,12 +25,31 @@ function Home() {
 
   return (
     <div>
-      <h1>All Rooms</h1>
+      <h1>Available Rooms</h1>
       {rooms.length === 0 ? (
         <p>No rooms found</p>
       ) : (
         rooms.map((room) => (
-          <RoomCard key={room._id} room={room} onDelete={handleDelete} />
+          <div key={room._id} style={{ border: "1px solid #ccc", padding: "10px", margin: "10px" }}>
+            <h3>Room {room.roomNumber}</h3>
+            <p>Type: {room.type}</p>
+            <p>Price per night: Rs. {room.pricePerNight}</p>
+            <p>Available: {room.isAvailable ? "Yes" : "No"}</p>
+
+            {user && user.role === "guest" && room.isAvailable && (
+              <Link to={`/book/${room._id}`}>
+                <button>Book Now</button>
+              </Link>
+            )}
+
+            {user && user.role === "admin" && (
+              <>
+                <Link to={`/update-room/${room._id}`}>Edit</Link>
+                {" | "}
+                <button onClick={() => handleDelete(room._id)}>Delete</button>
+              </>
+            )}
+          </div>
         ))
       )}
     </div>
