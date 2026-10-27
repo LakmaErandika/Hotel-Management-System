@@ -27,7 +27,8 @@ router.route("/add").post(verifyToken, async (req, res) => {
       room,
       checkInDate,
       checkOutDate,
-      totalPrice
+      totalPrice,
+      status: "confirmed" // auto-confirmed, no admin approval needed
     });
 
     await newBooking.save();
@@ -127,9 +128,11 @@ router.route("/confirm-payment/:id").put(verifyToken, async (req, res) => {
     if (booking.guest.toString() !== req.user.id) {
       return res.status(403).json({ error: "Not your booking" });
     }
+    if (booking.paymentStatus === "paid") {
+      return res.status(400).json({ error: "This booking has already been paid" });
+    }
 
     booking.paymentStatus = "paid";
-    booking.status = "confirmed";
     await booking.save();
 
     res.json({ status: "Payment confirmed", booking });

@@ -41,11 +41,11 @@ function AdminBookings() {
             <p>Total: Rs. {b.totalPrice}</p>
             <p>Status: {b.status}</p>
             <p>Payment: {b.paymentStatus}</p>
-            <button onClick={() => handleStatusChange(b._id, "confirmed")}>Confirm</button>
+             {/*<button onClick={() => handleStatusChange(b._id, "confirmed")}>Confirm</button>
             {" "}
             <button onClick={() => handleStatusChange(b._id, "cancelled")}>Cancel</button>
             {" "}
-            <button onClick={() => handleDelete(b._id)}>Delete</button>
+            <button onClick={() => handleDelete(b._id)}>Delete</button>*/}
           </div>
         ))
       )}

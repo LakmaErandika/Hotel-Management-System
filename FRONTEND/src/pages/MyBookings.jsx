@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 function MyBookings() {
   const [bookings, setBookings] = useState([]);
+  const navigate = useNavigate();
 
   const fetchBookings = () => {
     api.get("/booking/my-bookings")
@@ -17,7 +19,7 @@ function MyBookings() {
   const handleCancel = (id) => {
     api.put(`/booking/cancel/${id}`)
       .then(() => fetchBookings())
-      .catch((err) => console.log(err));
+      .catch((err) => alert(err.response?.data?.error || "Error cancelling booking"));
   };
 
   return (
@@ -34,8 +36,21 @@ function MyBookings() {
             <p>Total: Rs. {b.totalPrice}</p>
             <p>Status: {b.status}</p>
             <p>Payment: {b.paymentStatus}</p>
-            {b.status !== "cancelled" && (
-              <button onClick={() => handleCancel(b._id)}>Cancel Booking</button>
+
+            {b.status === "confirmed" && b.paymentStatus === "unpaid" && (
+              <>
+                <button onClick={() => navigate(`/payment/${b._id}`)}>Pay Now</button>
+                {" "}
+                <button onClick={() => handleCancel(b._id)}>Cancel Booking</button>
+              </>
+            )}
+
+            {b.paymentStatus === "paid" && (
+              <p style={{ color: "green" }}>Booking confirmed and paid.</p>
+            )}
+
+            {b.status === "cancelled" && (
+              <p>This booking was cancelled.</p>
             )}
           </div>
         ))

@@ -10,21 +10,23 @@ function Payment() {
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState("");
 
   const handlePay = (e) => {
     e.preventDefault();
     setProcessing(true);
+    setError("");
 
     // Simulated payment — no real card processing
     setTimeout(() => {
-      api.put(`/booking/update-status/${bookingId}`, { status: "confirmed" })
+      api.put(`/booking/confirm-payment/${bookingId}`)
         .then(() => {
-          alert("Payment successful! Booking confirmed.");
+          alert("Payment successful!");
           navigate("/my-bookings");
         })
         .catch((err) => {
           console.log(err);
-          alert("Something went wrong confirming your booking.");
+          setError(err.response?.data?.error || "Payment failed");
         })
         .finally(() => setProcessing(false));
     }, 1000); // fake delay to simulate processing
@@ -59,6 +61,7 @@ function Payment() {
           required
         />
         <br />
+        {error && <p style={{ color: "red" }}>{error}</p>}
         <button type="submit" disabled={processing}>
           {processing ? "Processing..." : "Pay Now"}
         </button>
