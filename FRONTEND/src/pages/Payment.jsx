@@ -13,7 +13,6 @@ function Payment() {
   const [error, setError] = useState("");
 
   const validate = () => {
-    // Card number: digits only, typically 13-19 digits for real cards
     if (!/^\d+$/.test(cardNumber)) {
       return "Card number must contain only digits.";
     }
@@ -21,7 +20,6 @@ function Payment() {
       return "Card number must be between 13 and 19 digits.";
     }
 
-    // Expiry: must be MM/YY format
     const expiryMatch = expiry.match(/^(\d{2})\/(\d{2})$/);
     if (!expiryMatch) {
       return "Expiry date must be in MM/YY format.";
@@ -34,21 +32,19 @@ function Payment() {
       return "Expiry month must be between 01 and 12.";
     }
 
-    // Compare against current date
     const now = new Date();
-    const currentYear = now.getFullYear() % 100; // last two digits
-    const currentMonth = now.getMonth() + 1; // JS months are 0-indexed
+    const currentYear = now.getFullYear() % 100;
+    const currentMonth = now.getMonth() + 1;
 
     if (year < currentYear || (year === currentYear && month < currentMonth)) {
       return "Card has expired. Please use a valid expiry date.";
     }
 
-    // CVV: exactly 3 digits
     if (!/^\d{3}$/.test(cvv)) {
       return "CVV must be exactly 3 digits.";
     }
 
-    return null; // no errors
+    return null;
   };
 
   const handlePay = (e) => {
@@ -78,9 +74,9 @@ function Payment() {
   };
 
   return (
-    <div>
-      <h1>Payment</h1>
-      <p>This is a dummy payment gateway for demonstration purposes.</p>
+    <div className="form-panel">
+      <h2>Payment</h2>
+      <p style={{ marginTop: "-8px" }}>Dummy payment gateway for demonstration purposes.</p>
       <form onSubmit={handlePay}>
         <input
           type="text"
@@ -90,7 +86,6 @@ function Payment() {
           maxLength={19}
           required
         />
-        <br />
         <input
           type="text"
           placeholder="MM/YY"
@@ -99,7 +94,6 @@ function Payment() {
           maxLength={5}
           required
         />
-        <br />
         <input
           type="text"
           placeholder="CVV"
@@ -108,8 +102,7 @@ function Payment() {
           maxLength={3}
           required
         />
-        <br />
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p className="form-error">{error}</p>}
         <button type="submit" disabled={processing}>
           {processing ? "Processing..." : "Pay Now"}
         </button>

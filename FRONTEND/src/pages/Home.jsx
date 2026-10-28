@@ -24,31 +24,36 @@ function Home() {
   };
 
   return (
-    <div>
+    <div className="page">
       <h1>Available Rooms</h1>
       {rooms.length === 0 ? (
-        <p>No rooms found</p>
+        <p className="empty-state">No rooms found.</p>
       ) : (
         rooms.map((room) => (
-          <div key={room._id} style={{ border: "1px solid #ccc", padding: "10px", margin: "10px" }}>
-            <h3>Room {room.roomNumber}</h3>
-            <p>Type: {room.type}</p>
-            <p>Price per night: Rs. {room.pricePerNight}</p>
-            <p>Available: {room.isAvailable ? "Yes" : "No"}</p>
-
-            {user && user.role === "guest" && room.isAvailable && (
-              <Link to={`/book/${room._id}`}>
-                <button>Book Now</button>
-              </Link>
-            )}
-
-            {user && user.role === "admin" && (
-              <>
-                <Link to={`/update-room/${room._id}`}>Edit</Link>
-                {" | "}
-                <button onClick={() => handleDelete(room._id)}>Delete</button>
-              </>
-            )}
+          <div className="room-row" key={room._id}>
+            <div className="room-mark">
+              <span className="num">{room.roomNumber}</span>
+              <span className="type">{room.type}</span>
+            </div>
+            <div className="room-body">
+              <div>
+                <div className="price">Rs. {room.pricePerNight} <span style={{ fontSize: "0.9rem", color: "var(--charcoal-dim)" }}>/ night</span></div>
+                <div className={`avail ${room.isAvailable ? "" : "full"}`}>
+                  {room.isAvailable ? "Available" : "Fully booked"}
+                </div>
+              </div>
+              <div className="actions">
+                {user && user.role === "guest" && room.isAvailable && (
+                  <Link to={`/book/${room._id}`}><button>Book Now</button></Link>
+                )}
+                {user && user.role === "admin" && (
+                  <>
+                    <Link to={`/update-room/${room._id}`}><button className="btn-secondary">Edit</button></Link>
+                    <button className="btn-danger" onClick={() => handleDelete(room._id)}>Delete</button>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
         ))
       )}

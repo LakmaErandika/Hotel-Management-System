@@ -14,38 +14,44 @@ function AdminBookings() {
     fetchBookings();
   }, []);
 
-  const handleStatusChange = (id, status) => {
-    api.put(`/booking/update-status/${id}`, { status })
-      .then(() => fetchBookings())
-      .catch((err) => console.log(err));
-  };
-
   const handleDelete = (id) => {
     api.delete(`/booking/delete/${id}`)
       .then(() => fetchBookings())
-      .catch((err) => console.log(err));
+      .catch((err) => alert(err.response?.data?.error || "Error deleting booking"));
   };
 
   return (
-    <div>
+    <div className="page">
       <h1>Manage Bookings</h1>
       {bookings.length === 0 ? (
-        <p>No bookings found.</p>
+        <p className="empty-state">No bookings found.</p>
       ) : (
         bookings.map((b) => (
-          <div key={b._id} style={{ border: "1px solid #ccc", padding: "10px", margin: "10px" }}>
+          <div className="booking-card" key={b._id}>
+            <h3 style={{ marginBottom: "6px" }}>
+              Room {b.room?.roomNumber} · {b.room?.type}
+            </h3>
             <p>Guest: {b.guest?.name} ({b.guest?.email})</p>
-            <p>Room: {b.room?.roomNumber} ({b.room?.type})</p>
             <p>Check-in: {new Date(b.checkInDate).toLocaleDateString()}</p>
             <p>Check-out: {new Date(b.checkOutDate).toLocaleDateString()}</p>
             <p>Total: Rs. {b.totalPrice}</p>
-            <p>Status: {b.status}</p>
-            <p>Payment: {b.paymentStatus}</p>
-             {/*<button onClick={() => handleStatusChange(b._id, "confirmed")}>Confirm</button>
-            {" "}
-            <button onClick={() => handleStatusChange(b._id, "cancelled")}>Cancel</button>
-            {" "}
-            <button onClick={() => handleDelete(b._id)}>Delete</button>*/}
+            <p>
+              Status: <span className={`status-${b.status}`}>{b.status}</span>
+              {"  ·  "}
+              Payment: <span className={b.paymentStatus === "paid" ? "status-confirmed" : "status-pending"}>
+                {b.paymentStatus}
+              </span>
+            </p>
+
+            {b.paymentStatus === "paid" ? (
+              <p className="status-confirmed" style={{ marginTop: "8px" }}>
+                Payment received — this booking is locked and cannot be deleted.
+              </p>
+            ) : (
+              <button className="btn-danger" style={{ marginTop: "8px" }} onClick={() => handleDelete(b._id)}>
+                Delete
+              </button>
+            )}
           </div>
         ))
       )}

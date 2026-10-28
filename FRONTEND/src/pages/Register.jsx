@@ -26,8 +26,8 @@ function Register() {
   };
 
   return (
-    <div>
-      <h1>Register</h1>
+    <div className="form-panel">
+      <h2>Create an account</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -36,7 +36,6 @@ function Register() {
           onChange={(e) => setName(e.target.value)}
           required
         />
-        <br />
         <input
           type="email"
           placeholder="Email"
@@ -44,7 +43,6 @@ function Register() {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <br />
         <input
           type="text"
           placeholder="Phone"
@@ -52,7 +50,6 @@ function Register() {
           onChange={(e) => setPhone(e.target.value)}
           required
         />
-        <br />
         <input
           type="password"
           placeholder="Password"
@@ -60,11 +57,10 @@ function Register() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <br />
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p className="form-error">{error}</p>}
         <button type="submit">Register</button>
       </form>
-      <p>Already have an account? <Link to="/login">Login</Link></p>
+      <p className="form-footer">Already have an account? <Link to="/login">Login</Link></p>
     </div>
   );
 }

@@ -30,31 +30,17 @@ function Login() {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <br />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <br />
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">Login</button>
-      </form>
-      <p>Don't have an account? <Link to="/register">Register</Link></p>
-    </div>
-  );
+  <div className="form-panel">
+    <h2>Login</h2>
+    <form onSubmit={handleSubmit}>
+      <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+      <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+      {error && <p className="form-error">{error}</p>}
+      <button type="submit">Login</button>
+    </form>
+    <p className="form-footer">Don't have an account? <Link to="/register">Register</Link></p>
+  </div>
+ );
 }
 
 export default Login;

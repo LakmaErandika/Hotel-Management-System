@@ -34,35 +34,30 @@ function BookRoom() {
       });
   };
 
-  if (!room) return <p>Loading room details...</p>;
+  if (!room) return <p className="empty-state">Loading room details...</p>;
 
   return (
-    <div>
-      <h1>Book Room {room.roomNumber}</h1>
-      <p>Type: {room.type}</p>
-      <p>Price per night: Rs. {room.pricePerNight}</p>
+    <div className="form-panel">
+      <h2>Book Room {room.roomNumber}</h2>
+      <p style={{ marginTop: "-8px" }}>{room.type} · Rs. {room.pricePerNight} / night</p>
 
       <form onSubmit={handleSubmit}>
-        <label>Check-in date:</label>
-        <br />
+        <label>Check-in date</label>
         <input
           type="date"
           value={checkInDate}
           onChange={(e) => setCheckInDate(e.target.value)}
           required
         />
-        <br />
-        <label>Check-out date:</label>
-        <br />
+        <label>Check-out date</label>
         <input
           type="date"
           value={checkOutDate}
           onChange={(e) => setCheckOutDate(e.target.value)}
           required
         />
-        <br />
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">Confirm Booking</button>
+        {error && <p className="form-error">{error}</p>}
+        <button type="submit">Continue to payment</button>
       </form>
     </div>
   );

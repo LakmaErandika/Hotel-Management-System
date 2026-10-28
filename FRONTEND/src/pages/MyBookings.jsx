@@ -23,34 +23,44 @@ function MyBookings() {
   };
 
   return (
-    <div>
+    <div className="page">
       <h1>My Bookings</h1>
       {bookings.length === 0 ? (
-        <p>You have no bookings yet.</p>
+        <p className="empty-state">You have no bookings yet.</p>
       ) : (
         bookings.map((b) => (
-          <div key={b._id} style={{ border: "1px solid #ccc", padding: "10px", margin: "10px" }}>
-            <p>Room: {b.room?.roomNumber} ({b.room?.type})</p>
+          <div className="booking-card" key={b._id}>
+            <h3 style={{ marginBottom: "6px" }}>
+              Room {b.room?.roomNumber} · {b.room?.type}
+            </h3>
             <p>Check-in: {new Date(b.checkInDate).toLocaleDateString()}</p>
             <p>Check-out: {new Date(b.checkOutDate).toLocaleDateString()}</p>
             <p>Total: Rs. {b.totalPrice}</p>
-            <p>Status: {b.status}</p>
-            <p>Payment: {b.paymentStatus}</p>
+            <p>
+              Status: <span className={`status-${b.status}`}>{b.status}</span>
+              {"  ·  "}
+              Payment: <span className={b.paymentStatus === "paid" ? "status-confirmed" : "status-pending"}>
+                {b.paymentStatus}
+              </span>
+            </p>
 
             {b.status === "confirmed" && b.paymentStatus === "unpaid" && (
-              <>
+              <div style={{ marginTop: "10px", display: "flex", gap: "10px" }}>
                 <button onClick={() => navigate(`/payment/${b._id}`)}>Pay Now</button>
-                {" "}
-                <button onClick={() => handleCancel(b._id)}>Cancel Booking</button>
-              </>
+                <button className="btn-danger" onClick={() => handleCancel(b._id)}>Cancel Booking</button>
+              </div>
             )}
 
             {b.paymentStatus === "paid" && (
-              <p style={{ color: "green" }}>Booking confirmed and paid.</p>
+              <p className="status-confirmed" style={{ marginTop: "8px" }}>
+                Booking confirmed and paid.
+              </p>
             )}
 
             {b.status === "cancelled" && (
-              <p>This booking was cancelled.</p>
+              <p className="status-cancelled" style={{ marginTop: "8px" }}>
+                This booking was cancelled.
+              </p>
             )}
           </div>
         ))
