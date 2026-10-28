@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -12,6 +11,7 @@ import Payment from "./pages/Payment";
 import MyBookings from "./pages/MyBookings";
 import AdminBookings from "./pages/AdminBookings";
 import Navbar from "./components/Navbar";
+import ChatBot from "./components/ChatBot";
 
 function App() {
   return (
@@ -24,37 +24,26 @@ function App() {
           <Route path="/register" element={<Register />} />
 
           <Route path="/add-room" element={
-            <ProtectedRoute adminOnly>
-              <AddRoom />
-            </ProtectedRoute>
+            <ProtectedRoute adminOnly><AddRoom /></ProtectedRoute>
           } />
           <Route path="/update-room/:id" element={
-            <ProtectedRoute adminOnly>
-              <UpdateRoom />
-            </ProtectedRoute>
+            <ProtectedRoute adminOnly><UpdateRoom /></ProtectedRoute>
           } />
           <Route path="/admin/bookings" element={
-            <ProtectedRoute adminOnly>
-              <AdminBookings />
-            </ProtectedRoute>
+            <ProtectedRoute adminOnly><AdminBookings /></ProtectedRoute>
           } />
 
           <Route path="/book/:id" element={
-            <ProtectedRoute>
-              <BookRoom />
-            </ProtectedRoute>
+            <ProtectedRoute><BookRoom /></ProtectedRoute>
           } />
           <Route path="/payment/:bookingId" element={
-            <ProtectedRoute>
-              <Payment />
-            </ProtectedRoute>
+            <ProtectedRoute><Payment /></ProtectedRoute>
           } />
           <Route path="/my-bookings" element={
-            <ProtectedRoute>
-              <MyBookings />
-            </ProtectedRoute>
+            <ProtectedRoute><MyBookings /></ProtectedRoute>
           } />
         </Routes>
+        <ChatBot />
       </BrowserRouter>
     </AuthProvider>
   );
