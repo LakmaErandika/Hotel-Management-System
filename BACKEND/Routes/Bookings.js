@@ -13,6 +13,10 @@ router.route("/add").post(verifyToken, async (req, res) => {
       return res.status(404).json({ error: "Room not found" });
     }
 
+    if (!roomData.isAvailable) {
+      return res.status(400).json({ error: "This room is no longer available" });
+    }
+
     const nights = Math.ceil(
       (new Date(checkOutDate) - new Date(checkInDate)) / (1000 * 60 * 60 * 24)
     );
@@ -23,15 +27,20 @@ router.route("/add").post(verifyToken, async (req, res) => {
     const totalPrice = nights * roomData.pricePerNight;
 
     const newBooking = new Booking({
-      guest: req.user.id, // comes from the verified token, not the request body
+      guest: req.user.id,// comes from the verified token, not the request body
       room,
       checkInDate,
       checkOutDate,
       totalPrice,
-      status: "confirmed" // auto-confirmed, no admin approval needed
+      status: "confirmed"// auto-confirmed, no admin approval needed
     });
 
     await newBooking.save();
+
+    // Mark the room as unavailable once booked
+    roomData.isAvailable = false;
+    await roomData.save();
+
     res.json({ status: "Booking created", booking: newBooking });
   } catch (err) {
     console.log(err);
@@ -74,9 +83,16 @@ router.route("/cancel/:id").put(verifyToken, async (req, res) => {
     if (booking.guest.toString() !== req.user.id) {
       return res.status(403).json({ error: "Not your booking" });
     }
+    if (booking.paymentStatus === "paid") {
+      return res.status(400).json({ error: "Cannot cancel a booking that has already been paid" });
+    }
 
     booking.status = "cancelled";
     await booking.save();
+
+    // Free up the room again
+    await Room.findByIdAndUpdate(booking.room, { isAvailable: true });
+
     res.json({ status: "Booking cancelled" });
   } catch (err) {
     console.log(err);
@@ -84,33 +100,20 @@ router.route("/cancel/:id").put(verifyToken, async (req, res) => {
   }
 });
 
-// Update booking status (admin only — confirm/cancel)
-router.route("/update-status/:id").put(verifyToken, verifyAdmin, async (req, res) => {
-  const { status } = req.body;
-
-  try {
-    const booking = await Booking.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
-    if (!booking) {
-      return res.status(404).json({ error: "Booking not found" });
-    }
-    res.json({ status: "Booking status updated", booking });
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Error updating booking", details: err.message });
-  }
-});
-
 // Delete a booking (admin only)
 router.route("/delete/:id").delete(verifyToken, verifyAdmin, async (req, res) => {
   try {
-    const deleted = await Booking.findByIdAndDelete(req.params.id);
-    if (!deleted) {
+    const booking = await Booking.findById(req.params.id);
+    if (!booking) {
       return res.status(404).json({ error: "Booking not found" });
     }
+    if (booking.paymentStatus === "paid") {
+      return res.status(400).json({ error: "Cannot delete a booking that has already been paid" });
+    }
+
+    await Room.findByIdAndUpdate(booking.room, { isAvailable: true });
+    await Booking.findByIdAndDelete(req.params.id);
+
     res.json({ status: "Booking deleted" });
   } catch (err) {
     console.log(err);
