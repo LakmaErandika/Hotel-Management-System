@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import api from "../services/api";
 
 function BookRoom() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const [room, setRoom] = useState(null);
-  const [checkInDate, setCheckInDate] = useState("");
-  const [checkOutDate, setCheckOutDate] = useState("");
+  const [checkInDate, setCheckInDate] = useState(searchParams.get("checkIn") || "");
+  const [checkOutDate, setCheckOutDate] = useState(searchParams.get("checkOut") || "");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -43,19 +44,9 @@ function BookRoom() {
 
       <form onSubmit={handleSubmit}>
         <label>Check-in date</label>
-        <input
-          type="date"
-          value={checkInDate}
-          onChange={(e) => setCheckInDate(e.target.value)}
-          required
-        />
+        <input type="date" value={checkInDate} onChange={(e) => setCheckInDate(e.target.value)} required />
         <label>Check-out date</label>
-        <input
-          type="date"
-          value={checkOutDate}
-          onChange={(e) => setCheckOutDate(e.target.value)}
-          required
-        />
+        <input type="date" value={checkOutDate} onChange={(e) => setCheckOutDate(e.target.value)} required />
         {error && <p className="form-error">{error}</p>}
         <button type="submit">Continue to payment</button>
       </form>

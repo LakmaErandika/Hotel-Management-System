@@ -1,6 +1,8 @@
 const router = require("express").Router();
-const Room = require("../models/Room");
+const Room = require("../Models/Room");
 const { verifyToken, verifyAdmin } = require("../Middleware/auth");
+const Booking = require("../Models/Booking"); 
+
 
 // Add a new room
 router.route("/add").post(verifyToken, verifyAdmin, (req, res) => {
@@ -74,6 +76,37 @@ router.route("/delete/:id").delete(verifyToken, verifyAdmin, async (req, res) =>
     });
 });
 
+// Search rooms available for specific dates
+router.route("/search").get(async (req, res) => {
+  const { checkInDate, checkOutDate } = req.query;
+
+  if (!checkInDate || !checkOutDate) {
+    return res.status(400).json({ error: "checkInDate and checkOutDate are required" });
+  }
+
+  try {
+    const allRooms = await Room.find({ isAvailable: true }); // exclude admin-closed rooms
+
+    const overlappingBookings = await Booking.find({
+      status: "confirmed",
+      checkInDate: { $lt: new Date(checkOutDate) },
+      checkOutDate: { $gt: new Date(checkInDate) }
+    }).select("room");
+
+    const bookedRoomIds = overlappingBookings.map((b) => b.room.toString());
+
+    const availableRooms = allRooms.filter(
+      (room) => !bookedRoomIds.includes(room._id.toString())
+    );
+
+    res.json(availableRooms);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error searching rooms", details: err.message });
+  }
+});
+
+
 // Get a single room
 router.route("/get/:id").get(async (req, res) => {
   let roomId = req.params.id;
@@ -87,6 +120,7 @@ router.route("/get/:id").get(async (req, res) => {
       res.status(500).send({ status: "Error with get room", error: err.message });
     });
 });
+
 
 module.exports = router;
 
