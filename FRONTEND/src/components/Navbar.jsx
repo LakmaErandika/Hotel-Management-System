@@ -14,6 +14,11 @@ function Navbar() {
     <nav className="navbar">
       <span className="brand">Ceylon Heights Hotel</span>
       <Link to="/">Rooms</Link>
+      <Link to="/about">About</Link>
+      <Link to="/facilities">Facilities</Link>
+      <Link to="/gallery">Gallery</Link>
+      <Link to="/reviews">Reviews</Link>
+      <Link to="/contact">Contact</Link>
 
       {user && user.role === "admin" && (
         <>

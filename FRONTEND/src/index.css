@@ -408,11 +408,12 @@ button:disabled { background: #C9C2B5; cursor: not-allowed; }
 }
 
 .room-photo {
-  width: 150px;
-  object-fit: cover;
+  width: 300px;
+  height: 220px;
+  object-fit: contain;
+  background: var(--ivory-dim);
   flex-shrink: 0;
 }
-
 /* ---------- Reviews ---------- */
 .reviews-section {
   margin-top: 50px;
@@ -454,4 +455,46 @@ button:disabled { background: #C9C2B5; cursor: not-allowed; }
 .review-author {
   font-size: 0.85rem;
   color: var(--charcoal-dim);
+}
+
+/* ---------- Facilities page ---------- */
+.facilities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.facility-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 20px;
+}
+
+.facility-icon {
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+/* ---------- Gallery page ---------- */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+.gallery-img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  background: var(--ivory-dim);
+}
+
+/* ---------- Contact page ---------- */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+@media (max-width: 700px) {
+  .contact-grid { grid-template-columns: 1fr; }
 }

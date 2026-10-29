@@ -46,8 +46,8 @@ const FAQ = [
     answer: "Hotel staff with an admin account can add, edit, or remove rooms, and manage all guest bookings from the admin dashboard."
   },
   {
-    keywords: ["contact", "phone", "email", "help", "support"],
-    answer: "For further assistance, please reach out to our front desk at support@ceylonheights.com or call +94 11 234 5678."
+    keywords: ["contact", "Hotline", "phone", "email", "help", "support"],
+    answer: "For further assistance, please reach out to our front desk at support@ceylonheights.com or call +94 999998765."
   },
   {
     keywords: ["hi", "hello", "hey"],
@@ -82,7 +82,7 @@ function getAnswer(message) {
 
   return bestMatch
     ? bestMatch.answer
-    : "I'm not sure about that yet. Try asking about booking, payment, cancellation, check-in/out times, or room types — or contact the front desk for anything else.";
+    : "I'm not sure about that yet. Try asking about booking, payment, cancellation, check-in/out times, or room types — or contact the front desk for anything else.(+94 999998765.)";
 }
 
 function ChatBot() {
