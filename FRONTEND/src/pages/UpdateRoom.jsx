@@ -10,6 +10,7 @@ function UpdateRoom() {
   const [type, setType] = useState("");
   const [pricePerNight, setPricePerNight] = useState("");
   const [isAvailable, setIsAvailable] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     api.get(`/room/get/${id}`)
@@ -25,6 +26,7 @@ function UpdateRoom() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
 
     api.put(`/room/update/${id}`, {
       roomNumber,
@@ -36,12 +38,14 @@ function UpdateRoom() {
         alert("Room updated");
         navigate("/");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setError(err.response?.data?.error || "Error updating room");
+      });
   };
 
   return (
-    <div>
-      <h1>Update Room</h1>
+    <div className="form-panel">
+      <h2>Update Room</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -49,30 +53,28 @@ function UpdateRoom() {
           onChange={(e) => setRoomNumber(e.target.value)}
           required
         />
-        <br />
         <input
           type="text"
           value={type}
           onChange={(e) => setType(e.target.value)}
           required
         />
-        <br />
         <input
           type="number"
           value={pricePerNight}
           onChange={(e) => setPricePerNight(e.target.value)}
           required
         />
-        <br />
-        <label>
-          Available:
+        <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <input
             type="checkbox"
             checked={isAvailable}
             onChange={(e) => setIsAvailable(e.target.checked)}
+            style={{ width: "auto" }}
           />
+          Available
         </label>
-        <br />
+        {error && <p className="form-error">{error}</p>}
         <button type="submit">Update Room</button>
       </form>
     </div>

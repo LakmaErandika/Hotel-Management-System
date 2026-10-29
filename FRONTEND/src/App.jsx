@@ -11,6 +11,7 @@ import Payment from "./pages/Payment";
 import MyBookings from "./pages/MyBookings";
 import AdminBookings from "./pages/AdminBookings";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import ChatBot from "./components/ChatBot";
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
             <ProtectedRoute><MyBookings /></ProtectedRoute>
           } />
         </Routes>
+        <Footer />
         <ChatBot />
       </BrowserRouter>
     </AuthProvider>

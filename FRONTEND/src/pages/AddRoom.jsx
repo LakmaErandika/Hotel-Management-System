@@ -8,9 +8,11 @@ function AddRoom() {
   const [type, setType] = useState("");
   const [pricePerNight, setPricePerNight] = useState("");
   const [isAvailable, setIsAvailable] = useState(true);
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
 
     api.post("/room/add", {
       roomNumber,
@@ -22,12 +24,14 @@ function AddRoom() {
         alert("Room added");
         navigate("/");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setError(err.response?.data?.error || "Error adding room");
+      });
   };
 
   return (
-    <div>
-      <h1>Add Room</h1>
+    <div className="form-panel">
+      <h2>Add Room</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -36,7 +40,6 @@ function AddRoom() {
           onChange={(e) => setRoomNumber(e.target.value)}
           required
         />
-        <br />
         <input
           type="text"
           placeholder="Type (e.g. Deluxe)"
@@ -44,7 +47,6 @@ function AddRoom() {
           onChange={(e) => setType(e.target.value)}
           required
         />
-        <br />
         <input
           type="number"
           placeholder="Price per night"
@@ -52,16 +54,16 @@ function AddRoom() {
           onChange={(e) => setPricePerNight(e.target.value)}
           required
         />
-        <br />
-        <label>
-          Available:
+        <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <input
             type="checkbox"
             checked={isAvailable}
             onChange={(e) => setIsAvailable(e.target.checked)}
+            style={{ width: "auto" }}
           />
+          Available
         </label>
-        <br />
+        {error && <p className="form-error">{error}</p>}
         <button type="submit">Add Room</button>
       </form>
     </div>
