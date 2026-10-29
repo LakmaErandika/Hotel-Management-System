@@ -10,6 +10,12 @@ function Home() {
   const [searched, setSearched] = useState(false);
   const { user } = useAuth();
 
+  const moveRoom = (roomId, direction) => {
+  api.put("/room/reorder", { roomId, direction })
+    .then(() => fetchAllRooms())
+    .catch((err) => alert(err.response?.data?.error || "Cannot move room"));
+};
+
 
    const fetchReviews = () => {
      api.get("/review")
@@ -116,6 +122,10 @@ function Home() {
       </Link>
       {user && user.role === "admin" && (
         <>
+          <Link to={`/update-room/${room._id}`}><button className="btn-secondary">Edit</button></Link>
+          <button className="btn-danger" onClick={() => handleDelete(room._id)}>Delete</button>
+          <button className="btn-secondary" onClick={() => moveRoom(room._id, "up")}>↑</button>
+          <button className="btn-secondary" onClick={() => moveRoom(room._id, "down")}>↓</button>
           <Link to={`/update-room/${room._id}`}><button className="btn-secondary">Edit</button></Link>
           <button className="btn-danger" onClick={() => handleDelete(room._id)}>Delete</button>
         </>

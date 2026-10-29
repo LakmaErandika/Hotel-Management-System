@@ -1,90 +1,47 @@
 const router = require("express").Router();
 const Room = require("../Models/room");
+const Booking = require("../Models/Booking");
 const { verifyToken, verifyAdmin } = require("../Middleware/auth");
-const Booking = require("../Models/Booking"); 
 
+// Add a new room (admin only) — new rooms go to the end of the order
+router.route("/add").post(verifyToken, verifyAdmin, async (req, res) => {
+  const { roomNumber, type, pricePerNight, isAvailable, description, facilities, imageUrl, maxOccupancy } = req.body;
 
-// Add a new room
-router.route("/add").post(verifyToken, verifyAdmin, (req, res) => {
-  const roomNumber = req.body.roomNumber;
-  const type = req.body.type;
-  const pricePerNight = Number(req.body.pricePerNight);
-  const isAvailable = req.body.isAvailable;
-  const {description, facilities, imageUrl } = req.body;
+  try {
+    const roomCount = await Room.countDocuments();
 
-  const newRoom = new Room({
-    roomNumber,
-    type,
-    pricePerNight,
-    isAvailable,
-    description,
-    facilities,
-    imageUrl
-  });
-
-  newRoom.save()
-    .then(() => {
-      res.json("Room Added");
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({ status: "Error adding room", error: err.message });
+    const newRoom = new Room({
+      roomNumber,
+      type,
+      pricePerNight,
+      isAvailable,
+      description,
+      facilities,
+      imageUrl,
+      maxOccupancy,
+      order: roomCount
     });
+
+    await newRoom.save();
+    res.json("Room Added");
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ status: "Error adding room", error: err.message });
+  }
 });
 
-// Get all rooms
+// Get all rooms, sorted by admin-defined order
 router.route("/").get((req, res) => {
   Room.find()
-    .then((rooms) => {
-      res.json(rooms);
-    })
+    .sort({ order: 1, createdAt: 1 })
+    .then((rooms) => res.json(rooms))
     .catch((err) => {
       console.log(err);
       res.status(500).send({ status: "Error fetching rooms", error: err.message });
     });
 });
 
-// Update a room
-router.route("/update/:id").put(verifyToken, verifyAdmin, async (req, res) => {
-  let roomId = req.params.id;
-  const { roomNumber, type, pricePerNight, isAvailable } = req.body;
-  const {description, facilities, imageUrl } = req.body;
-
-  const updateRoom = {
-    roomNumber,
-    type,
-    pricePerNight,
-    isAvailable,
-    description,
-    facilities,
-    imageUrl
-  };
-
-  await Room.findByIdAndUpdate(roomId, updateRoom)
-    .then(() => {
-      res.status(200).send({ status: "Room updated" });
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send({ status: "Error with updating data", error: err.message });
-    });
-});
-
-// Delete a room
-router.route("/delete/:id").delete(verifyToken, verifyAdmin, async (req, res) => {
-  let roomId = req.params.id;
-
-  await Room.findByIdAndDelete(roomId)
-    .then(() => {
-      res.status(200).send({ status: "Room deleted" });
-    })
-    .catch((err) => {
-      console.log(err.message);
-      res.status(500).send({ status: "Error with delete room", error: err.message });
-    });
-});
-
-// Search rooms available for specific dates
+// Search rooms available for specific dates, sorted by order
 router.route("/search").get(async (req, res) => {
   const { checkInDate, checkOutDate } = req.query;
 
@@ -93,7 +50,7 @@ router.route("/search").get(async (req, res) => {
   }
 
   try {
-    const allRooms = await Room.find({ isAvailable: true }); // exclude admin-closed rooms
+    const allRooms = await Room.find({ isAvailable: true }).sort({ order: 1, createdAt: 1 });
 
     const overlappingBookings = await Booking.find({
       status: "confirmed",
@@ -114,22 +71,82 @@ router.route("/search").get(async (req, res) => {
   }
 });
 
+// Move a room up or down in display order (admin only)
+router.route("/reorder").put(verifyToken, verifyAdmin, async (req, res) => {
+  const { roomId, direction } = req.body;
+
+  try {
+    const rooms = await Room.find().sort({ order: 1, createdAt: 1 });
+    const index = rooms.findIndex((r) => r._id.toString() === roomId);
+
+    if (index === -1) {
+      return res.status(404).json({ error: "Room not found" });
+    }
+
+    let swapIndex;
+    if (direction === "up") swapIndex = index - 1;
+    else if (direction === "down") swapIndex = index + 1;
+    else return res.status(400).json({ error: "Invalid direction" });
+
+    if (swapIndex < 0 || swapIndex >= rooms.length) {
+      return res.status(400).json({ error: "Cannot move further in that direction" });
+    }
+
+    // Move the room within the array, then renumber everything 0..n-1
+    const [moved] = rooms.splice(index, 1);
+    rooms.splice(swapIndex, 0, moved);
+
+    await Promise.all(
+      rooms.map((room, i) => Room.findByIdAndUpdate(room._id, { order: i }))
+    );
+
+    res.json({ status: "Room order updated" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Error reordering rooms", details: err.message });
+  }
+});
 
 // Get a single room
 router.route("/get/:id").get(async (req, res) => {
-  let roomId = req.params.id;
-
-  await Room.findById(roomId)
-    .then((room) => {
-      res.status(200).send({ status: "Room fetched", room: room });
-    })
-    .catch((err) => {
-      console.log(err.message);
-      res.status(500).send({ status: "Error with get room", error: err.message });
-    });
+  try {
+    const room = await Room.findById(req.params.id);
+    if (!room) return res.status(404).json({ error: "Room not found" });
+    res.status(200).send({ status: "Room fetched", room });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ status: "Error fetching room", error: err.message });
+  }
 });
 
+// Update a room (admin only)
+router.route("/update/:id").put(verifyToken, verifyAdmin, async (req, res) => {
+  const { roomNumber, type, pricePerNight, isAvailable, description, facilities, imageUrl, maxOccupancy } = req.body;
+
+  try {
+    const updatedRoom = await Room.findByIdAndUpdate(
+      req.params.id,
+      { roomNumber, type, pricePerNight, isAvailable, description, facilities, imageUrl, maxOccupancy },
+      { new: true }
+    );
+    if (!updatedRoom) return res.status(404).json({ error: "Room not found" });
+    res.json("Room updated successfully");
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ status: "Error updating room", error: err.message });
+  }
+});
+
+// Delete a room (admin only)
+router.route("/delete/:id").delete(verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const deletedRoom = await Room.findByIdAndDelete(req.params.id);
+    if (!deletedRoom) return res.status(404).json({ error: "Room not found" });
+    res.json("Room deleted successfully");
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ status: "Error deleting room", error: err.message });
+  }
+});
 
 module.exports = router;
-
-

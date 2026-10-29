@@ -38,3 +38,9 @@ app.use("/booking", bookingRouter);
 
 const reviewRouter = require("./Routes/Reviews.js");
 app.use("/review", reviewRouter);
+
+const contentRouter = require("./Routes/Content.js");
+app.use("/content", contentRouter);
+
+const contactMessageRouter = require("./Routes/ContactMessages.js");
+app.use("/contact", contactMessageRouter);

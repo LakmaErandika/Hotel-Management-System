@@ -24,6 +24,7 @@ function Navbar() {
         <>
           <Link to="/add-room">Add Room</Link>
           <Link to="/admin/bookings">Manage Bookings</Link>
+          <Link to="/admin/messages">Messages</Link>
         </>
       )}
 

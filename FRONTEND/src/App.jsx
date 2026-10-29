@@ -19,6 +19,8 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ChatBot from "./components/ChatBot";
 import RoomDetails from "./pages/RoomDetails";
+import AdminMessages from "./pages/AdminMessages";
+
 
 function App() {
   return (
@@ -35,6 +37,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/room/:id" element={<RoomDetails />} />
+          <Route path="/admin/messages" element={
+  <ProtectedRoute adminOnly><AdminMessages /></ProtectedRoute>
+} />
 
           <Route path="/add-room" element={
             <ProtectedRoute adminOnly><AddRoom /></ProtectedRoute>
