@@ -370,3 +370,88 @@ button:disabled { background: #C9C2B5; cursor: not-allowed; }
   font-size: 0.8rem;
   color: #9FB0B6;
 }
+
+/* ---------- Hotel intro ---------- */
+.hotel-intro {
+  margin-bottom: 30px;
+}
+
+.hero-image {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  margin-bottom: 16px;
+}
+
+.facility-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge {
+  background: var(--ivory-dim);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: var(--teal-900);
+}
+
+.badge.small {
+  font-size: 0.75rem;
+  padding: 3px 9px;
+}
+
+/* ---------- Room photo in room-row ---------- */
+.room-row {
+  align-items: stretch;
+}
+
+.room-photo {
+  width: 150px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* ---------- Reviews ---------- */
+.reviews-section {
+  margin-top: 50px;
+}
+
+.review-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.review-form select {
+  padding: 10px;
+  border: 1px solid var(--border);
+  background: var(--ivory-dim);
+}
+
+.review-form input {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  background: var(--ivory-dim);
+}
+
+.review-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+}
+
+.review-stars {
+  color: var(--gold);
+  letter-spacing: 2px;
+}
+
+.review-author {
+  font-size: 0.85rem;
+  color: var(--charcoal-dim);
+}

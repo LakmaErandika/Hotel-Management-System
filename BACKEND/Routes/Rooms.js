@@ -10,12 +10,16 @@ router.route("/add").post(verifyToken, verifyAdmin, (req, res) => {
   const type = req.body.type;
   const pricePerNight = Number(req.body.pricePerNight);
   const isAvailable = req.body.isAvailable;
+  const {description, facilities, imageUrl } = req.body;
 
   const newRoom = new Room({
     roomNumber,
     type,
     pricePerNight,
-    isAvailable
+    isAvailable,
+    description,
+    facilities,
+    imageUrl
   });
 
   newRoom.save()
@@ -44,12 +48,16 @@ router.route("/").get((req, res) => {
 router.route("/update/:id").put(verifyToken, verifyAdmin, async (req, res) => {
   let roomId = req.params.id;
   const { roomNumber, type, pricePerNight, isAvailable } = req.body;
+  const {description, facilities, imageUrl } = req.body;
 
   const updateRoom = {
     roomNumber,
     type,
     pricePerNight,
-    isAvailable
+    isAvailable,
+    description,
+    facilities,
+    imageUrl
   };
 
   await Room.findByIdAndUpdate(roomId, updateRoom)

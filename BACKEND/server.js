@@ -35,3 +35,6 @@ app.use("/auth", authRouter);
 
 const bookingRouter = require("./Routes/Bookings.js");
 app.use("/booking", bookingRouter);
+
+const reviewRouter = require("./Routes/Reviews.js");
+app.use("/review", reviewRouter);
