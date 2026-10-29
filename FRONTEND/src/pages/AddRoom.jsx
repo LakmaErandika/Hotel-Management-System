@@ -12,6 +12,7 @@ function AddRoom() {
   const [description, setDescription] = useState("");
   const [facilities, setFacilities] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [maxOccupancy, setMaxOccupancy] = useState(5);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,7 +25,8 @@ function AddRoom() {
       isAvailable,
       description,
       facilities: facilities.split(",").map((f) => f.trim()).filter(Boolean),
-      imageUrl: imageUrl || undefined
+      imageUrl: imageUrl || undefined,
+      maxOccupancy: Number(maxOccupancy)
     })
       .then(() => {
         alert("Room added");
@@ -69,6 +71,14 @@ function AddRoom() {
           />
           Available
         </label>
+        <input
+  type="number"
+  placeholder="Max occupancy (guests)"
+  min={1}
+  value={maxOccupancy}
+  onChange={(e) => setMaxOccupancy(e.target.value)}
+  required
+/>
 
         <textarea
   placeholder="Room description"

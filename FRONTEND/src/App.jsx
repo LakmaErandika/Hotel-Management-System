@@ -18,6 +18,7 @@ import Contact from "./pages/Contact";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ChatBot from "./components/ChatBot";
+import RoomDetails from "./pages/RoomDetails";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/room/:id" element={<RoomDetails />} />
 
           <Route path="/add-room" element={
             <ProtectedRoute adminOnly><AddRoom /></ProtectedRoute>

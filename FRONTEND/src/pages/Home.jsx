@@ -91,36 +91,38 @@ function Home() {
         <p className="empty-state">No rooms available for these dates.</p>
       ) : (
         rooms.map((room) => (
-          <div className="room-row" key={room._id}>
-            <img src={room.imageUrl} alt={room.type} className="room-photo" />
-            <div className="room-body">
-               <div>
-                   <h3 style={{ margin: "0 0 4px" }}>Room {room.roomNumber} — {room.type}</h3>
-                   {room.description && <p style={{ margin: "0 0 8px", fontSize: "0.9rem" }}>{room.description}</p>}
-                   {room.facilities?.length > 0 && (
-                      <div className="facility-badges" style={{ marginBottom: "8px" }}>
-                          {room.facilities.map((f, i) => (
-                             <span className="badge small" key={i}>{f}</span>
-               ))}
-              </div>
-          )}
-         <div className="price">Rs. {room.pricePerNight} <span style={{ fontSize: "0.9rem", color: "var(--charcoal-dim)" }}>/ night</span></div>
-     </div>
-     <div className="actions">
-      {user && user.role === "guest" && searched && (
-        <Link to={`/book/${room._id}?checkIn=${checkInDate}&checkOut=${checkOutDate}`}>
-          <button>Book Now</button>
-        </Link>
+      <div className="room-row" key={room._id}>
+  <Link to={`/room/${room._id}`}>
+    <img src={room.imageUrl} alt={room.type} className="room-photo" />
+  </Link>
+  <div className="room-body">
+    <div>
+      <Link to={`/room/${room._id}`} style={{ textDecoration: "none" }}>
+        <h3 style={{ margin: "0 0 4px", color: "var(--teal-900)" }}>Room {room.roomNumber} — {room.type}</h3>
+      </Link>
+      {room.description && <p style={{ margin: "0 0 8px", fontSize: "0.9rem" }}>{room.description}</p>}
+      {room.facilities?.length > 0 && (
+        <div className="facility-badges" style={{ marginBottom: "8px" }}>
+          {room.facilities.map((f, i) => (
+            <span className="badge small" key={i}>{f}</span>
+          ))}
+        </div>
       )}
+      <div className="price">Rs. {room.pricePerNight} <span style={{ fontSize: "0.9rem", color: "var(--charcoal-dim)" }}>/ night</span></div>
+    </div>
+    <div className="actions">
+      <Link to={`/room/${room._id}`}>
+        <button className="btn-secondary">View Details</button>
+      </Link>
       {user && user.role === "admin" && (
         <>
           <Link to={`/update-room/${room._id}`}><button className="btn-secondary">Edit</button></Link>
           <button className="btn-danger" onClick={() => handleDelete(room._id)}>Delete</button>
         </>
-           )}
-           </div>
-        </div>
-      </div>
+      )}
+    </div>
+  </div>
+</div>
       
       
 

@@ -20,9 +20,19 @@ const bookingSchema = new Schema({
     type: Date,
     required: true
   },
+  adults: {
+    type: Number,
+    required: true,
+    min: 1
+  },
+  children: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
   status: {
     type: String,
-    enum: ["pending", "confirmed", "cancelled"],
+    enum: ["pending", "confirmed", "rejected", "cancelled"],
     default: "pending"
   },
   paymentStatus: {

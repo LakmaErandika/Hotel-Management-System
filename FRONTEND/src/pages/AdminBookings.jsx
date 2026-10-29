@@ -34,6 +34,7 @@ function AdminBookings() {
             <p>Guest: {b.guest?.name} ({b.guest?.email})</p>
             <p>Check-in: {new Date(b.checkInDate).toLocaleDateString()}</p>
             <p>Check-out: {new Date(b.checkOutDate).toLocaleDateString()}</p>
+            <p>Guests: {b.adults} adult{b.adults > 1 ? "s" : ""}{b.children > 0 ? `, ${b.children} child${b.children > 1 ? "ren" : ""}` : ""}</p>
             <p>Total: Rs. {b.totalPrice}</p>
             <p>
               Status: <span className={`status-${b.status}`}>{b.status}</span>

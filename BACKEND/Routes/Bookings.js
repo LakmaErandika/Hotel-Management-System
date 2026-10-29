@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const Booking = require("../Models/Booking");
-const Room = require("../Models/Room");
+const Room = require("../Models/room");
 const { verifyToken, verifyAdmin } = require("../Middleware/auth");
 
 // Checks if a room has any CONFIRMED, PAID-or-not booking that overlaps the given dates
@@ -22,7 +22,7 @@ async function hasOverlappingBooking(roomId, checkIn, checkOut, excludeBookingId
 
 // Create a booking REQUEST, checked against existing bookings' dates
 router.route("/add").post(verifyToken, async (req, res) => {
-  const { room, checkInDate, checkOutDate } = req.body;
+  const { room, checkInDate, checkOutDate, adults, children } = req.body;
 
   try {
     const roomData = await Room.findById(room);
@@ -32,6 +32,20 @@ router.route("/add").post(verifyToken, async (req, res) => {
 
     if (!roomData.isAvailable) {
       return res.status(400).json({ error: "This room is currently closed for booking" });
+    }
+
+    const adultCount = Number(adults);
+    const childCount = Number(children) || 0;
+
+    if (!adultCount || adultCount < 1) {
+      return res.status(400).json({ error: "At least 1 adult is required" });
+    }
+
+    const totalGuests = adultCount + childCount;
+    if (totalGuests > roomData.maxOccupancy) {
+      return res.status(400).json({
+        error: `This room allows a maximum of ${roomData.maxOccupancy} guests`
+      });
     }
 
     const nights = Math.ceil(
@@ -53,6 +67,8 @@ router.route("/add").post(verifyToken, async (req, res) => {
       room,
       checkInDate,
       checkOutDate,
+      adults: adultCount,
+      children: childCount,
       totalPrice,
       status: "confirmed"// auto-confirmed, no admin approval needed
     });

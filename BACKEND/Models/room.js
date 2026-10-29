@@ -30,8 +30,15 @@ const roomSchema = new Schema({
   imageUrl: {
     type: String,
     default: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800"
-  }
-}, { timestamps: true });
+  },
+  maxOccupancy: {
+  type: Number,
+  default: 5
+},
+}, 
+
+{ timestamps: true });
+
 
 const Room = mongoose.model("Room", roomSchema);
 module.exports = Room;
