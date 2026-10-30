@@ -62,88 +62,105 @@ function Home() {
     fetchAllRooms();
   };
 
-  return (
-    <div className="page">
-      <h1>{searched ? "Available Rooms for Your Dates" : "All Rooms"}</h1>
-    <div className="hotel-intro">
-  <img
-    src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200"
-    alt="Ceylon Heights Hotel"
-    className="hero-image"
-  />
-  <div className="hotel-intro-text">
-    <p>
-      Set on the southern coast of Sri Lanka, steps from Polhena Beach in Matara.
-      Ceylon Heights Hotel offers calm, reef-sheltered waters, warm hospitality,
-      and easy access to Matara's historic Dutch Fort and local seafood restaurants.
-    </p>
-  </div>
-</div>
+  const today = new Date().toISOString().split("T")[0];
+  const roomLabel = (n) => (/^room/i.test(String(n)) ? n : `Room ${n}`);
+  const fmt = (d) => new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+return (
+  <>
+    <section
+      className="hero"
+      style={{ backgroundImage: "url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1800)" }}
+    >
+      <div className="hero-inner">
+        <h1>Stay a short walk from Polhena Beach</h1>
+        <p>Calm, reef-sheltered water for swimming, Matara's old Dutch Fort nearby, and a room for every budget.</p>
+      </div>
+    </section>
 
-      <form onSubmit={handleSearch} style={{ display: "flex", gap: "12px", alignItems: "flex-end", marginBottom: "24px", flexWrap: "wrap" }}>
-        <div>
-          <label style={{ display: "block", fontSize: "0.85rem", color: "var(--charcoal-dim)" }}>Check-in</label>
-          <input type="date" value={checkInDate} onChange={(e) => setCheckInDate(e.target.value)} required />
+    <div className="search-wrap">
+      <form className="search-card" onSubmit={handleSearch}>
+        <div className="field">
+          <label>Check-in</label>
+          <input type="date" min={today} value={checkInDate} onChange={(e) => setCheckInDate(e.target.value)} required />
         </div>
-        <div>
-          <label style={{ display: "block", fontSize: "0.85rem", color: "var(--charcoal-dim)" }}>Check-out</label>
-          <input type="date" value={checkOutDate} onChange={(e) => setCheckOutDate(e.target.value)} required />
+        <div className="field">
+          <label>Check-out</label>
+          <input type="date" min={checkInDate || today} value={checkOutDate} onChange={(e) => setCheckOutDate(e.target.value)} required />
         </div>
-        <button type="submit">Check Availability</button>
+        <button type="submit">Check availability</button>
         {searched && <button type="button" className="btn-secondary" onClick={clearSearch}>Clear</button>}
       </form>
+    </div>
+
+    <div className="page wide">
+      <div className="section-head">
+        <h2>{searched ? "Free for your dates" : "Our rooms"}</h2>
+        <p>
+          {searched
+            ? `Rooms available from ${fmt(checkInDate)} to ${fmt(checkOutDate)}.`
+            : "Choose your dates above to see what's free, or browse every room below."}
+        </p>
+      </div>
 
       {rooms.length === 0 ? (
-        <p className="empty-state">No rooms available for these dates.</p>
+        <p className="empty-state">
+          {searched ? "No rooms are free on those dates. Try a different range." : "No rooms have been added yet."}
+        </p>
       ) : (
-        rooms.map((room) => (
-      <div className="room-row" key={room._id}>
-  <Link to={`/room/${room._id}`}>
-    <img src={room.imageUrl} alt={room.type} className="room-photo" />
-  </Link>
-  <div className="room-body">
-    <div>
-      <Link to={`/room/${room._id}`} style={{ textDecoration: "none" }}>
-        <h3 style={{ margin: "0 0 4px", color: "var(--teal-900)" }}>Room {room.roomNumber} — {room.type}</h3>
-      </Link>
-      {room.description && <p style={{ margin: "0 0 8px", fontSize: "0.9rem" }}>{room.description}</p>}
-      {room.facilities?.length > 0 && (
-        <div className="facility-badges" style={{ marginBottom: "8px" }}>
-          {room.facilities.map((f, i) => (
-            <span className="badge small" key={i}>{f}</span>
+        <div className="room-list">
+          {rooms.map((room) => (
+            <div className="room-row" key={room._id}>
+              <Link
+                to={`/room/${room._id}`}
+                className="room-photo-wrap"
+                style={{ backgroundImage: `url(${room.imageUrl})` }}
+              >
+                <img src={room.imageUrl} alt={room.type} className="room-photo" />
+              </Link>
+
+              <div className="room-body">
+                <p className="room-number">{roomLabel(room.roomNumber)}</p>
+                <h3 className="room-title">
+                  <Link to={`/room/${room._id}`}>{room.type}</Link>
+                </h3>
+                {room.description && <p className="room-desc">{room.description}</p>}
+
+                <div className="facility-badges">
+                  {room.facilities?.slice(0, 4).map((f, i) => (
+                    <span className="badge small" key={i}>{f}</span>
+                  ))}
+                  {room.facilities?.length > 4 && (
+                    <span className="badge small more">+{room.facilities.length - 4} more</span>
+                  )}
+                  <span className="badge small">Sleeps {room.maxOccupancy || 2}</span>
+                </div>
+
+                <div className="room-foot">
+                  <div className="room-price">
+                    Rs. {Number(room.pricePerNight).toLocaleString()}<small>per night</small>
+                  </div>
+                  <div className="room-actions">
+                    <Link to={`/room/${room._id}`}><button>View details</button></Link>
+                  </div>
+                </div>
+
+                {user && user.role === "admin" && (
+                  <div className="admin-tools">
+                    <button className="btn-secondary btn-sm" onClick={() => moveRoom(room._id, "up")}>Move up</button>
+                    <button className="btn-secondary btn-sm" onClick={() => moveRoom(room._id, "down")}>Move down</button>
+                    <Link to={`/update-room/${room._id}`}><button className="btn-secondary btn-sm">Edit</button></Link>
+                    <button className="btn-danger btn-sm" onClick={() => handleDelete(room._id)}>Delete</button>
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
         </div>
       )}
-      <div className="price">Rs. {room.pricePerNight} <span style={{ fontSize: "0.9rem", color: "var(--charcoal-dim)" }}>/ night</span></div>
     </div>
-    <div className="actions">
-  <Link to={`/room/${room._id}`}>
-    <button className="btn-secondary">View Details</button>
-  </Link>
-
-  {user && user.role === "admin" && (
-    <>
-      <button className="btn-secondary" onClick={() => moveRoom(room._id, "up")}>↑</button>
-      <button className="btn-secondary" onClick={() => moveRoom(room._id, "down")}>↓</button>
-      <Link to={`/update-room/${room._id}`}>
-        <button className="btn-secondary">Edit</button>
-      </Link>
-      <button className="btn-danger" onClick={() => handleDelete(room._id)}>Delete</button>
-    </>
-  )}
-</div>
-  </div>
-</div>
-      
-      
-
-        ))
-      )}
-      
-
-
-    </div>
-  );
+  </>
+);
+ 
 }
 
 export default Home;
