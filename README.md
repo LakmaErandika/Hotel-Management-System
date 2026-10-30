@@ -323,7 +323,7 @@ The database has six collections. Every document has an `_id` primary key plus `
 ## Security and Validation
 
 - Passwords are hashed with **bcryptjs** before storage.
-- Authentication uses **JWT** (1-day expiry). Expired tokens trigger an automatic logout.
+- Authentication uses **JWT**. Expired tokens trigger an automatic logout.
 - Admin-only API routes are protected by `verifyToken` and `verifyAdmin` middleware. Admin-only frontend pages are protected by a `ProtectedRoute` component.
 - Secrets live in `.env`, which is excluded from Git.
 - **Server-side validation:** required fields (Mongoose schemas), duplicate email and room number checks, date order, occupancy limits, rating range, ownership checks, and meaningful HTTP status codes (400, 401, 403, 404, 500).
