@@ -65,7 +65,7 @@ function App() {
       </main>
       <Footer />
     </div>
-   <chatBot />
+   <ChatBot />
         
   </BrowserRouter>
 </AuthProvider>
