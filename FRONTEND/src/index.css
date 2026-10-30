@@ -544,3 +544,84 @@ html, body, #root {
 .app-main {
   flex: 1;
 }
+
+
+/* ---------- Mobile navbar ---------- */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.nav-toggle {
+  display: none;
+  background: transparent;
+  color: var(--ivory);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  font-size: 1.3rem;
+  padding: 4px 12px;
+}
+.nav-toggle:hover { background: var(--teal-800); }
+
+/* ---------- Tablet and mobile ---------- */
+@media (max-width: 800px) {
+  .navbar { padding: 14px 18px; }
+  .nav-toggle { display: block; }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    width: 100%;
+    padding-top: 12px;
+  }
+  .nav-links.open { display: flex; }
+}
+
+@media (max-width: 700px) {
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.4rem; }
+
+  .page { padding: 24px 16px 60px; }
+
+  /* Forms */
+  .form-panel {
+    margin: 20px auto;
+    width: calc(100% - 24px);
+    padding: 24px 18px;
+  }
+
+  /* Room list: photo on top, details underneath */
+  .room-row { flex-direction: column; }
+  .room-row > a { display: block; }
+  .room-photo { width: 100%; height: 200px; }
+  .room-body { padding: 16px; }
+  .room-row .actions { flex-wrap: wrap; width: 100%; }
+
+  .hero-image { height: 180px; }
+
+  /* Room details page */
+  .room-details { gap: 16px; }
+  .room-details-img { width: 100%; height: 220px; }
+  .room-details-body { min-width: 0; }
+
+  /* Booking cards: let buttons wrap */
+  .booking-card div { flex-wrap: wrap; }
+
+  /* Footer */
+  .footer-content {
+    flex-direction: column;
+    gap: 24px;
+    padding: 30px 18px;
+  }
+
+  /* Chatbot */
+  .chatbot-wrapper { right: 12px; bottom: 12px; }
+  .chatbot-panel {
+    width: calc(100vw - 24px);
+    max-width: 340px;
+    max-height: 70vh;
+  }
+}
