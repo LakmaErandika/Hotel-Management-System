@@ -329,7 +329,7 @@ button:disabled { background: #C9C2B5; cursor: not-allowed; }
 .footer {
   background: var(--teal-900);
   color: var(--ivory);
-  margin-top: 60px;
+  margin-top: 0;
 }
 
 .footer-content {
@@ -528,4 +528,19 @@ button:disabled { background: #C9C2B5; cursor: not-allowed; }
 
 .booking-panel h3 {
   margin-top: 0;
+}
+
+/* ---------- Sticky footer layout ---------- */
+html, body, #root {
+  min-height: 100%;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-main {
+  flex: 1;
 }

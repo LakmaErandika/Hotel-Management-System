@@ -25,7 +25,9 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+       <div className="app-shell">
         <Navbar />
+        <main className="app-main">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/room/:id" element={<RoomDetails />} />
@@ -60,10 +62,14 @@ function App() {
             <ProtectedRoute><MyBookings /></ProtectedRoute>
           } />
         </Routes>
-        <Footer />
-        <ChatBot />
-      </BrowserRouter>
-    </AuthProvider>
+      </main>
+      <Footer />
+    </div>
+   <chatBot />
+        
+  </BrowserRouter>
+</AuthProvider>
+
   );
 }
 
