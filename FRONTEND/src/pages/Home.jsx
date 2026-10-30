@@ -117,20 +117,21 @@ function Home() {
       <div className="price">Rs. {room.pricePerNight} <span style={{ fontSize: "0.9rem", color: "var(--charcoal-dim)" }}>/ night</span></div>
     </div>
     <div className="actions">
-      <Link to={`/room/${room._id}`}>
-        <button className="btn-secondary">View Details</button>
+  <Link to={`/room/${room._id}`}>
+    <button className="btn-secondary">View Details</button>
+  </Link>
+
+  {user && user.role === "admin" && (
+    <>
+      <button className="btn-secondary" onClick={() => moveRoom(room._id, "up")}>↑</button>
+      <button className="btn-secondary" onClick={() => moveRoom(room._id, "down")}>↓</button>
+      <Link to={`/update-room/${room._id}`}>
+        <button className="btn-secondary">Edit</button>
       </Link>
-      {user && user.role === "admin" && (
-        <>
-          <Link to={`/update-room/${room._id}`}><button className="btn-secondary">Edit</button></Link>
-          <button className="btn-danger" onClick={() => handleDelete(room._id)}>Delete</button>
-          <button className="btn-secondary" onClick={() => moveRoom(room._id, "up")}>↑</button>
-          <button className="btn-secondary" onClick={() => moveRoom(room._id, "down")}>↓</button>
-          <Link to={`/update-room/${room._id}`}><button className="btn-secondary">Edit</button></Link>
-          <button className="btn-danger" onClick={() => handleDelete(room._id)}>Delete</button>
-        </>
-      )}
-    </div>
+      <button className="btn-danger" onClick={() => handleDelete(room._id)}>Delete</button>
+    </>
+  )}
+</div>
   </div>
 </div>
       

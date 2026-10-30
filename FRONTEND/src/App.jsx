@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
+import RoomDetails from "./pages/RoomDetails";
 import AddRoom from "./pages/AddRoom";
 import UpdateRoom from "./pages/UpdateRoom";
 import Login from "./pages/Login";
@@ -10,6 +11,7 @@ import BookRoom from "./pages/BookRoom";
 import Payment from "./pages/Payment";
 import MyBookings from "./pages/MyBookings";
 import AdminBookings from "./pages/AdminBookings";
+import AdminMessages from "./pages/AdminMessages";
 import About from "./pages/About";
 import Facilities from "./pages/Facilities";
 import Gallery from "./pages/Gallery";
@@ -18,9 +20,6 @@ import Contact from "./pages/Contact";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ChatBot from "./components/ChatBot";
-import RoomDetails from "./pages/RoomDetails";
-import AdminMessages from "./pages/AdminMessages";
-
 
 function App() {
   return (
@@ -29,6 +28,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/room/:id" element={<RoomDetails />} />
           <Route path="/about" element={<About />} />
           <Route path="/facilities" element={<Facilities />} />
           <Route path="/gallery" element={<Gallery />} />
@@ -36,10 +36,6 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/room/:id" element={<RoomDetails />} />
-          <Route path="/admin/messages" element={
-  <ProtectedRoute adminOnly><AdminMessages /></ProtectedRoute>
-} />
 
           <Route path="/add-room" element={
             <ProtectedRoute adminOnly><AddRoom /></ProtectedRoute>
@@ -49,6 +45,9 @@ function App() {
           } />
           <Route path="/admin/bookings" element={
             <ProtectedRoute adminOnly><AdminBookings /></ProtectedRoute>
+          } />
+          <Route path="/admin/messages" element={
+            <ProtectedRoute adminOnly><AdminMessages /></ProtectedRoute>
           } />
 
           <Route path="/book/:id" element={
