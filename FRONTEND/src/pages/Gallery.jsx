@@ -46,10 +46,27 @@ function Gallery() {
       })
       .catch((err) => alert(err.response?.data?.error || "Error saving content"));
   };
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+
+  useEffect(() => {
+  if (lightboxIndex === null) return;
+  const onKey = (e) => {
+    if (e.key === "Escape") setLightboxIndex(null);
+    if (e.key === "ArrowRight") setLightboxIndex((i) => (i + 1) % images.length);
+    if (e.key === "ArrowLeft") setLightboxIndex((i) => (i - 1 + images.length) % images.length);
+  };
+  window.addEventListener("keydown", onKey);
+  document.body.style.overflow = "hidden";
+  return () => {
+    window.removeEventListener("keydown", onKey);
+    document.body.style.overflow = "";
+  };
+}, [lightboxIndex, images.length]);
 
   return (
-    <div className="page">
+    <div className="page wide">
       <h1>Gallery</h1>
+      <p className="gallery-intro">Rooms, bathrooms and the pool at Ceylon Heights Hotel. Select a photo to see it larger.</p>
 
       {user?.role === "admin" && !editing && (
         <button className="btn-secondary" onClick={() => setEditing(true)} style={{ marginBottom: "16px" }}>
@@ -77,12 +94,51 @@ function Gallery() {
           <button className="btn-secondary" onClick={() => { setDraft(images); setEditing(false); }}>Cancel</button>
         </div>
       ) : (
-        <div className="gallery-grid">
-          {images.map((src, i) => (
-            <img src={src} alt={`Hotel view ${i + 1}`} key={i} className="gallery-img" />
-          ))}
-        </div>
+        <div className="gallery-masonry">
+  {images.map((src, i) => (
+    <button
+      type="button"
+      className="gallery-item"
+      key={i}
+      onClick={() => setLightboxIndex(i)}
+      aria-label={`Open photo ${i + 1} of ${images.length}`}
+    >
+      <img src={src} alt={`Hotel photo ${i + 1}`} className="gallery-photo" loading="lazy" />
+    </button>
+  ))}
+</div>
       )}
+
+      {lightboxIndex !== null && (
+  <div
+    className="lightbox"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Photo viewer"
+    onClick={() => setLightboxIndex(null)}
+  >
+    <button type="button" className="lightbox-close" onClick={() => setLightboxIndex(null)} aria-label="Close viewer">×</button>
+    <button
+      type="button"
+      className="lightbox-nav prev"
+      onClick={(e) => { e.stopPropagation(); setLightboxIndex((lightboxIndex - 1 + images.length) % images.length); }}
+      aria-label="Previous photo"
+    >‹</button>
+    <img
+      src={images[lightboxIndex]}
+      alt={`Hotel photo ${lightboxIndex + 1}`}
+      onClick={(e) => e.stopPropagation()}
+    />
+    <button
+      type="button"
+      className="lightbox-nav next"
+      onClick={(e) => { e.stopPropagation(); setLightboxIndex((lightboxIndex + 1) % images.length); }}
+      aria-label="Next photo"
+    >›</button>
+    <p className="lightbox-count">{lightboxIndex + 1} of {images.length}</p>
+  </div>
+)}
+
     </div>
   );
 }
