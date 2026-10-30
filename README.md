@@ -335,7 +335,7 @@ The database has six collections. Every document has an `_id` primary key plus `
 ## Troubleshooting
 
 **`querySrv ECONNREFUSED` / `ETIMEOUT` / `ENOTFOUND` when starting the backend**
-Your network is blocking MongoDB DNS lookups, which is common on university or proxy networks. Switch to a different network such as a phone hotspot, or use the standard (non-SRV) connection string from Atlas.
+Your network is blocking MongoDB DNS lookups, which is common on proxy networks. Switch to a different network such as a phone hotspot, or use the standard (non-SRV) connection string from Atlas.
 
 **`Could not connect to any servers... IP that isn't whitelisted`**
 Add your current IP under **Atlas → Security → Network Access**. It changes whenever you switch networks.
